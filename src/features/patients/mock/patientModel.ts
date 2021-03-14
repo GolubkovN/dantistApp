@@ -1,4 +1,9 @@
-export interface patientsModel {
+export interface AppointmentModel {
+  title: string;
+  data: PatientDataModel[];
+}
+
+export interface PatientDataModel {
   name: string;
   avatar: string;
   key: string;

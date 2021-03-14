@@ -1,39 +1,18 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   StyleSheet,
   Text,
-  TouchableOpacity,
   TouchableHighlight,
   View,
   SafeAreaView,
   Image,
+  SectionList,
 } from 'react-native';
 
-import {SwipeListView} from 'react-native-swipe-list-view';
-import {patients} from '../mock/patients';
+import {appointments} from '../mock/patients';
 
 export const PatientsListComponent = () => {
-  const [listData, setListData] = useState(patients);
-
-  const closeRow = (rowMap: any, rowKey: any) => {
-    if (rowMap[rowKey]) {
-      rowMap[rowKey].closeRow();
-    }
-  };
-
-  const deleteRow = (rowMap: any, rowKey: any) => {
-    closeRow(rowMap, rowKey);
-    const newData = [...listData];
-    const prevIndex = listData.findIndex((item) => item.key === rowKey);
-    newData.splice(prevIndex, 1);
-    setListData(newData);
-  };
-
-  const onRowDidOpen = (rowKey: any) => {
-    console.log('This row opened', rowKey);
-  };
-
-  const renderItem = (data: any) => (
+  const Item = ({data}: any) => (
     <TouchableHighlight
       onPress={() => console.log('You touched me')}
       style={styles.rowFront}
@@ -41,48 +20,28 @@ export const PatientsListComponent = () => {
       <View style={styles.groupItem}>
         <Image
           source={{
-            uri: data.item.avatar,
+            uri: data.avatar,
           }}
           style={styles.avatar}
         />
         <View style={{flex: 1}}>
-          <Text style={styles.fullName}>{data.item.name}</Text>
-          <Text style={styles.diagnoses}>{data.item.diagnoses}</Text>
+          <Text style={styles.fullName}>{data.name}</Text>
+          <Text style={styles.diagnoses}>{data.diagnoses}</Text>
         </View>
-        <Text>{data.item.time}</Text>
+        <Text>{data.time}</Text>
       </View>
     </TouchableHighlight>
   );
 
-  const renderHiddenItem = (data: any, rowMap: any) => (
-    <View style={styles.rowBack}>
-      <Text>Left</Text>
-      <TouchableOpacity
-        style={[styles.backRightBtn, styles.backRightBtnLeft]}
-        onPress={() => closeRow(rowMap, data.item.key)}>
-        <Text style={styles.backTextWhite}>Close</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.backRightBtn, styles.backRightBtnRight]}
-        onPress={() => deleteRow(rowMap, data.item.key)}>
-        <Text style={styles.backTextWhite}>Delete</Text>
-      </TouchableOpacity>
-    </View>
-  );
-
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.groupTitle}>9 марта</Text>
-      <SwipeListView
-        data={listData}
-        renderItem={renderItem}
-        renderHiddenItem={renderHiddenItem}
-        leftOpenValue={75}
-        rightOpenValue={-150}
-        previewRowKey={'0'}
-        previewOpenValue={-40}
-        previewOpenDelay={3000}
-        onRowDidOpen={onRowDidOpen}
+      <SectionList
+        sections={appointments}
+        renderItem={({item}) => <Item data={item} />}
+        keyExtractor={(item) => item.key}
+        renderSectionHeader={({section: {title}}) => (
+          <Text style={styles.groupTitle}>{title}</Text>
+        )}
       />
     </SafeAreaView>
   );
